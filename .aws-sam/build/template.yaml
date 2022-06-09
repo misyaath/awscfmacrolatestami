@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'AWS CloudFormation Macro Function for get Latest AMI ID
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+Resources:
+  CFMacroFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: CFMacroFunction
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+      Policies:
+      - Statement:
+        - Sid: DescribeImagesPolicies
+          Effect: Allow
+          Action:
+          - ec2:DescribeImages
+          Resource: '*'
+      Tags:
+        Name: CFMACROFUNCTION
+    Metadata:
+      SamResourceId: CFMacroFunction
+Outputs:
+  CFMacroFUnctionARN:
+    Description: CF Macro Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - CFMacroFunction
+      - Arn

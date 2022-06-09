@@ -30,7 +30,7 @@ export const lambdaHandler = async (event, context) => {
             latestAmi = new GetAmi(response.Images).byCreationDate().getLatest().ImageId;
         }
     } catch (err) {
-        return err;
+        return console.log(err);
     }
 
     return latestAmi;

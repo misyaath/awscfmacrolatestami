@@ -1,0 +1,25 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "",
+  "Resources": {
+    "wpMeNetworking": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "https://wpmeinfrastacks.s3.amazonaws.com/wpMeNetworking.json"
+      }
+    },
+    "wpMeS3Buckets": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "https://wpmeinfrastacks.s3.amazonaws.com/s3Buckets.json"
+      }
+    },
+    "wpMeInstances": {
+      "DependsOn": "wpMeNetworking",
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "https://wpmeinfrastacks.s3.amazonaws.com/wpMeInstances.json"
+      }
+    }
+  }
+}

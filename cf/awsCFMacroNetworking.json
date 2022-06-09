@@ -1,0 +1,171 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "AWS Cloudformation Macro tutorial template",
+  "Parameters": {
+    "vpcCidrBlocks": {
+      "Type": "String",
+      "Default": "172.16.0.0/16"
+    }
+  },
+  "Mappings": {
+    "Networks": {
+      "cidr": {
+        "Subnet": "172.16.0.0/19"
+      }
+    }
+  },
+  "Resources": {
+    "cfMacroVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "vpcCidrBlocks"
+        },
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "cfMacroVPC"
+          }
+        ]
+      }
+    },
+    "cfMacroSubnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "cfMacroVPC"
+        },
+        "CidrBlock": {
+          "Fn::FindInMap": [
+            "Networks",
+            "cidr",
+            "Subnet"
+          ]
+        },
+        "AvailabilityZone": "us-east-1a",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "cfMacroSubnet"
+          }
+        ]
+      }
+    },
+    "cfMacroInternetGw": {
+      "Type": "AWS::EC2::InternetGateway"
+    },
+    "cfMacroGatewayToInternet": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "cfMacroVPC"
+        },
+        "InternetGatewayId": {
+          "Ref": "cfMacroInternetGw"
+        }
+      }
+    },
+    "cfMacroRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "cfMacroVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "cfMacroRouteTable"
+          }
+        ]
+      }
+    },
+    "cfMacroSubnet1aRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "cfMacroSubnet"
+        },
+        "RouteTableId": {
+          "Ref": "cfMacroRouteTable"
+        }
+      }
+    },
+    "cfMacroRouteIGW": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "cfMacroRouteTable"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "cfMacroInternetGw"
+        }
+      }
+    },
+    "cfMacroSG": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow http to client host",
+        "VpcId": {
+          "Ref": "cfMacroVPC"
+        },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 443,
+            "ToPort": 443,
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "SecurityGroupEgress": [
+          {
+            "IpProtocol": -1,
+            "FromPort": -1,
+            "ToPort": -1,
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "cfMacroSG": {
+      "Description": "Application Security Group ID",
+      "Value": {
+        "Fn::GetAtt": [
+          "cfMacroSG",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "cfMacroSG"
+      }
+    },
+    "cfMacroVPC": {
+      "Description": "Application vpc",
+      "Value": {
+        "Ref": "cfMacroVPC"
+      },
+      "Export": {
+        "Name": "cfMacroVPC"
+      }
+    },
+    "cfMacroSubnet": {
+      "Description": "Application subnet AZ us-east-1a",
+      "Value": {
+        "Ref": "cfMacroSubnet"
+      },
+      "Export": {
+        "Name": "cfMacroSubnet"
+      }
+    }
+  }
+}

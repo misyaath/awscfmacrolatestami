@@ -5,14 +5,14 @@
     "cfMacroMeNetworking": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
-        "TemplateURL": "https://awscfmacro.s3.amazonaws.com/awsCFMacroNetworking.json"
+        "TemplateURL": "<< awsCFMacroNetworking.json S3 URL >>"
       }
     },
     "cfMacroInstances": {
       "DependsOn": "cfMacroMeNetworking",
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
-        "TemplateURL": "https://awscfmacro.s3.amazonaws.com/awsCFMacroInstance.json"
+        "TemplateURL": "<< awsCFMacroInstance.json S3 URL >>"
       }
     }
   }

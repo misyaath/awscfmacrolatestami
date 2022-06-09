@@ -10,6 +10,7 @@ lerna-debug.log*
 #aws config and build files
 .aws-sam/
 samconfig.toml
+.idea/
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json

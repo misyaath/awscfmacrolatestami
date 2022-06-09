@@ -14,8 +14,8 @@ describe('Tests LambdaHandler', function () {
                 BlockDeviceMappings: {},
                 InstanceType: 't2.micro'
             },
-            transformId: '985425871244::AMIIdMacroFunction',
-            requestId: 'a0d33e0d-837d-4350-ae10-dbd395275a8d',
+            transformId: '89965555::AMIIdMacroFunction',
+            requestId: '41255845wdfsf-gregr5-vgerfg',
             region: 'us-east-1',
             params: {},
             templateParameterValues: {}

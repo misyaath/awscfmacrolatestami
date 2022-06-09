@@ -32,11 +32,7 @@ export const lambdaHandler = async (event, context) => {
         }
     } catch (err) {
         console.log(err);
-        return {
-            "requestId": event.requestId,
-            "status": "failure",
-            "fragment": event.fragment
-        }
+        return false;
     }
     return {
         "requestId": event.requestId,

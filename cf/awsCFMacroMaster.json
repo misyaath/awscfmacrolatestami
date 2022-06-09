@@ -1,0 +1,19 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "",
+  "Resources": {
+    "cfMacroMeNetworking": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "https://awscfmacro.s3.amazonaws.com/awsCFMacroNetworking.json"
+      }
+    },
+    "cfMacroInstances": {
+      "DependsOn": "cfMacroMeNetworking",
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "https://awscfmacro.s3.amazonaws.com/awsCFMacroInstance.json"
+      }
+    }
+  }
+}

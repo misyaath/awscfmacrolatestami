@@ -28,10 +28,19 @@ export const lambdaHandler = async (event, context) => {
 
         if ("Images" in response) {
             latestAmi = new GetAmi(response.Images).byCreationDate().getLatest().ImageId;
+            event.fragment.ImageId = latestAmi;
         }
     } catch (err) {
-        return console.log(err);
+        console.log(err);
+        return {
+            "requestId": event.requestId,
+            "status": "failure",
+            "fragment": event.fragment
+        }
     }
-
-    return latestAmi;
+    return {
+        "requestId": event.requestId,
+        "status": "success",
+        "fragment": event.fragment
+    };
 };

@@ -2,81 +2,24 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "",
   "Resources": {
-    "wpMeInstanceProfile": {
-      "Type": "AWS::IAM::InstanceProfile",
-      "Properties": {
-        "Path": "/",
-        "Roles": [
-          {
-            "Ref": "wpMeAppInstanceRole"
-          }
-        ]
-      }
-    },
-    "wpMeAppInstanceRole": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Sid": "",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "ec2.amazonaws.com"
-              },
-              "Action": "sts:AssumeRole"
-            }
-          ]
-        },
-        "Description": "Instance Instance Profile for Code deploy and access s3",
-        "Policies": [
-          {
-            "PolicyName": "s3BucketAccessWpMe",
-            "PolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Action": [
-                    "s3:Get*",
-                    "s3:List*",
-                    "s3:Put*"
-                  ],
-                  "Effect": "Allow",
-                  "Resource": "*"
-                }
-              ]
-            }
-          }
-        ],
-        "RoleName": "wpMeAppInstanceRole",
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "wpMeAppInstanceRole"
-          }
-        ]
-      }
-    },
-    "wpMeInstance": {
+    "cfMacroInstance": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
-        "ImageId": "ami-025ac590ab1db1b2d",
-        "InstanceType": "t2.micro",
-        "IamInstanceProfile": {
-          "Ref": "wpMeInstanceProfile"
+        "Fn::Transform": {
+          "Name": "AMIIdMacroFunction"
         },
+        "InstanceType": "t2.micro",
         "NetworkInterfaces": [
           {
             "AssociatePublicIpAddress": "true",
             "DeviceIndex": "0",
             "GroupSet": [
               {
-                "Fn::ImportValue": "wpMeSg"
+                "Fn::ImportValue": "cfMacroSG"
               }
             ],
             "SubnetId": {
-              "Fn::ImportValue": "wpMeSiteSubnet"
+              "Fn::ImportValue": "cfMacroSubnet"
             }
           }
         ],
@@ -89,41 +32,7 @@
               "VolumeSize": "10"
             }
           }
-        ],
-        "KeyName": "wpMeKey",
-        "UserData": {
-          "Fn::Base64": {
-            "Fn::Join": [
-              "/n",
-              [
-                "curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar",
-                "sudo chmod +x wp-cli.phar",
-                "sudo mv wp-cli.phar /usr/local/bin/wp"
-              ]
-            ]
-          }
-        }
-      }
-    },
-    "wpMeARecord": {
-      "Type": "AWS::Route53::RecordSetGroup",
-      "Properties": {
-        "RecordSets": [
-          {
-            "Name": "mmisyaath.tech",
-            "Type": "A",
-            "TTL": "60",
-            "ResourceRecords": [
-              {
-                "Fn::GetAtt": [
-                  "wpMeInstance",
-                  "PublicIp"
-                ]
-              }
-            ]
-          }
-        ],
-        "HostedZoneId": "Z0256534152Y34L5H87IF"
+        ]
       }
     }
   }
